@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Bookstores</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .popup-btn {
+            margin-top: 8px;
+            padding: 6px 10px;
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete {
+            background: #d9534f;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBK8bj5cMHhOf5IerajNRz9-utWr4fCMKo",
+            authDomain: "literasipelajar-5ee61.firebaseapp.com",
+            databaseURL: "https://literasipelajar-5ee61-default-rtdb.firebaseio.com",
+            projectId: "literasipelajar-5ee61",
+            storageBucket: "literasipelajar-5ee61.firebasestorage.app",
+            messagingSenderId: "511909199846",
+            appId: "1:511909199846:web:7653a76ca1fe0fcb35e027"
+        };
+
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const map = L.map("map").setView([-7.79, 110.36], 13);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+        let layerGroup = L.layerGroup().addTo(map);
+
+        db.ref("bookstores").on("value", (snap) => {
+            const data = snap.val() || {};
+            layerGroup.clearLayers();
+
+            Object.keys(data).forEach((key) => {
+                const item = data[key];
+                const marker = L.marker([item.lat, item.lng]).addTo(layerGroup);
+
+                const html = `
+          <b>${item.name}</b><br/>
+          ${item.address}<br/><br/>
+          <div class="popup-btn" onclick="editItem('${key}')">Edit</div>
+          <div class="popup-btn delete" onclick="deleteItem('${key}')">Delete</div>
+        `;
+                marker.bindPopup(html);
+            });
+        });
+
+        function editItem(id) {
+            window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "edit", id }));
+        }
+
+        function deleteItem(id) {
+            window.ReactNativeWebView?.postMessage(JSON.stringify({ type: "delete", id }));
+        }
+    </script>
+</body>
+
+</html>

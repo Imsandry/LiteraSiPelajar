@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Lokasi</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        html,
+        body,
+        #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // --- FUNGSI DEBOUNCE: MEMBATASI FREKUENSI PENGIRIMAN PESAN ---
+        /**
+         * Membatasi eksekusi fungsi. Fungsi hanya akan dijalankan setelah 
+         * tidak dipanggil lagi selama periode 'timeout' tertentu.
+         */
+        function debounce(func, timeout = 100) {
+            let timer;
+            return function(...args) {
+                clearTimeout(timer);
+                const context = this;
+                timer = setTimeout(() => {
+                    func.apply(context, args);
+                }, timeout);
+            };
+        }
+        // -----------------------------------------------------------
+
+        const defaultLat = -7.79;
+        const defaultLng = 110.36;
+
+        const map = L.map("map", { zoomControl: false }).setView([defaultLat, defaultLng], 13);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+        let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+        // Fungsi untuk mengirim koordinat ke React Native
+        function sendCoordinates(lat, lng) {
+            window.ReactNativeWebView?.postMessage(JSON.stringify({
+                type: 'coordinates',
+                lat: lat,
+                lng: lng
+            }));
+        }
+
+        // 1. Buat fungsi pengirim koordinat yang di-debounce (hanya kirim setiap 100ms)
+        const debouncedSendCoordinates = debounce((lat, lng) => {
+            sendCoordinates(lat, lng);
+        }, 100);
+
+        // 2. Gunakan 'drag' event dengan debounce
+        // Ini memastikan input Lat/Lng diperbarui secara visual saat menggeser, tanpa lag.
+        marker.on('drag', function (event) {
+            const latlng = marker.getLatLng();
+            debouncedSendCoordinates(latlng.lat, latlng.lng);
+        });
+
+        // 3. Gunakan 'dragend' event tanpa debounce
+        // Ini WAJIB untuk memastikan koordinat FINAL (setelah geser selesai) terkirim.
+        marker.on('dragend', function (event) {
+            const latlng = marker.getLatLng();
+            sendCoordinates(latlng.lat, latlng.lng);
+        });
+        
+        // Kirim koordinat awal
+        sendCoordinates(defaultLat, defaultLng);
+
+        // Fungsi untuk menerima koordinat awal dari React Native
+        function receiveInitialCoordinates(initialLat, initialLng) {
+            const lat = parseFloat(initialLat);
+            const lng = parseFloat(initialLng);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                const latlng = L.latLng(lat, lng);
+                marker.setLatLng(latlng);
+                map.setView(latlng, 15);
+            }
+        }
+
+        // Menambahkan listener global untuk menerima data dari React Native
+        document.addEventListener('message', function (event) {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'initialLocation') {
+                    receiveInitialCoordinates(data.lat, data.lng);
+                }
+            } catch (e) {
+                console.error("Failed to parse message:", e);
+            }
+        });
+    </script>
+</body>
+
+</html>
