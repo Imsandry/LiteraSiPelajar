@@ -1,50 +1,30 @@
-# Welcome to your Expo app 👋
+# 1. Nama Produk
+LiteraSiPelajar
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 2. Deskripsi Produk
+LiteraSiPelajar adalah aplikasi mobile yang dirancang untuk pelajar dan mahasiswa dalam mencari, melihat, dan membeli buku. Aplikasi ini menyediakan katalog buku dari berbagai kategori seperti Sejarah, Teknologi, Pendidikan, Biografi, dan Romansa. Pengguna dapat melihat detail buku, menambahkannya ke keranjang, dan melakukan proses checkout.
 
-## Get started
+# 3. Komponen Pembangun Produk
+Aplikasi ini dibangun menggunakan teknologi berikut:
+- **Framework:** React Native & Expo
+- **Bahasa:** TypeScript
+- **Routing:** Expo Router
+- **Navigasi:** React Navigation
+- **UI:** React Native Maps, React Native WebView
+- **Backend Service:** Firebase (untuk fitur di masa depan)
+- **Package Manager:** npm
 
-1. Install dependencies
+# 4. Sumber Data
+Sumber data utama untuk aplikasi ini berasal dari file statis yang terletak di `app/data/books.ts`. File ini berisi daftar buku beserta detailnya seperti judul, harga, penulis, penerbit, tahun terbit, kategori, deskripsi, dan gambar.
 
-   ```bash
-   npm install
-   ```
+# 5. Tangkapan Layar Komponen Penting Produk
+*Catatan: Silakan tambahkan tangkapan layar dari aplikasi di sini.*
 
-2. Start the app
+### Halaman Utama
+(Tangkapan layar halaman utama)
 
-   ```bash
-   npx expo start
-   ```
+### Halaman Detail Buku
+(Tangkapan layar halaman detail buku)
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Halaman Checkout
+(Tangkapan layar halaman checkout)
